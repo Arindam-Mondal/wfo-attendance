@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <div class="d-flex flex-row mb-4 justify-content-between w-100">
+    <div>
+      <button type="button" class="btn btn-primary" (click)="updateCurrentMonth(-1)">
+        <i class="bi bi-arrow-left-circle-fill"></i>
+      </button>
+    </div>
+    <div>
+      <h2 class="text-center">
+        {{ currentDate() | date:'MMMM yyyy' }} <span class="badge text-bg-secondary">{{ getNoOfDaysCompleted() }}</span>
+      </h2>
+    </div>
+    <div>
+      <button type="button" class="btn btn-primary" (click)="updateCurrentMonth(1)">
+        <i class="bi bi-arrow-right-circle-fill"></i>
+      </button>
+    </div>
+  </div>
+
+
+
+  <div class="row mb-2">
+    <div *ngFor="let day of weekDays" class="col text-center fw-bold">
+      {{ day }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div *ngFor="let date of calendarDays" class="col-1-7 text-center p-2">
+      <div [ngClass]="{'border-warning border-3': isToday(date),
+                        'bg-success text-white' : wasWorkingFromOffice(date),
+                          'text-muted': !isCurrentMonth(date)}"
+           class="p-2 rounded border border-1" (click)="updateWfoAttendance(date)">
+        {{ date.getDate() }}
+      </div>
+    </div>
+  </div>
+</div>
