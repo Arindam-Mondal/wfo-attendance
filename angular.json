@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "wfo-attendance-ui:build:production"
+              "buildTarget": "wfo-attendance-ui:build:production"
             },
             "development": {
-              "browserTarget": "wfo-attendance-ui:build:development"
+              "buildTarget": "wfo-attendance-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +75,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "wfo-attendance-ui:build"
+            "buildTarget": "wfo-attendance-ui:build"
           }
         },
         "test": {
