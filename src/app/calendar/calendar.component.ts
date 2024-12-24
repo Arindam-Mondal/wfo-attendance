@@ -1,9 +1,16 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
+import {Component, computed, signal} from '@angular/core';
+import {DatePipe, NgClass, NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-calendar',
+  imports: [
+    NgClass,
+    DatePipe,
+    NgForOf
+  ],
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css']
+  standalone: true,
+  styleUrl: './calendar.component.css'
 })
 export class CalendarComponent{
 

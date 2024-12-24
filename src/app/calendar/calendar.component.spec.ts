@@ -6,10 +6,12 @@ describe('CalendarComponent', () => {
   let component: CalendarComponent;
   let fixture: ComponentFixture<CalendarComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [CalendarComponent]
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CalendarComponent]
+    })
+    .compileComponents();
+
     fixture = TestBed.createComponent(CalendarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
