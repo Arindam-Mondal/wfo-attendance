@@ -1,12 +1,26 @@
-<nav class="bg-primary m-0">
-  <div class="d-flex">
-    <span class="me-auto align-self-center m-1 text-white"><h1>WFO Attendance Tracker</h1></span>
-    <span class="align-self-center m-1 text-white">{{ username }}</span>
-    <div class="d-flex align-items-center m-2">
-      <img ngSrc="{{userImageSrc}}" alt="Profile Pic" height="50" width="50" class="rounded-circle">
-    </div>
-<!--    <button class="btn btn-outline-primary rounded-circle">-->
-<!--    </button>-->
-  </div>
+<!--<nav class="bg-primary m-0">-->
+<!--  <div class="d-flex">-->
+<!--    <span class="me-auto align-self-center m-1 text-white"><h1>WFO Attendance Tracker</h1></span>-->
+<!--    <span class="align-self-center m-1 text-white">{{ username }}</span>-->
+<!--    <div class="d-flex align-items-center m-2">-->
+<!--      <img ngSrc="{{userImageSrc}}" alt="Profile Pic" height="50" width="50" class="rounded-circle">-->
+<!--    </div>-->
+<!--    -->
+<!--  </div>-->
 
+<!--</nav>-->
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">WFO Attendance Tracker</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      @if(username) {
+        <span class="navbar-nav ms-auto mb-2 mb-lg-0">{{ username}}</span>
+        <button type="button" class="btn ms-1" (click)="logout()"><i class="bi bi-power"></i></button>
+      }
+    </div>
+  </div>
 </nav>
