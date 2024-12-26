@@ -1,5 +1,6 @@
-import {Component, computed, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {DatePipe, NgClass, NgForOf} from '@angular/common';
+import {AuthService} from '../service/auth.service';
 
 @Component({
   selector: 'app-calendar',
@@ -16,6 +17,7 @@ export class CalendarComponent{
 
   currentDate = signal<Date>(new Date());
   attendance = signal<string[]>([]);
+  readonly authService: AuthService = inject(AuthService);
 
   calendarDays: Date[] = [];
   weekDays: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

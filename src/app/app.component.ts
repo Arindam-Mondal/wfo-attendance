@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import {CalendarComponent} from './calendar/calendar.component';
+import {RouterOutlet} from '@angular/router';
+import {HeaderComponent} from './header/header.component';
 
 @Component({
   selector: 'app-root',
-  imports: [CalendarComponent],
+  imports: [RouterOutlet, HeaderComponent],
   templateUrl: './app.component.html',
   standalone: true,
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
   title = 'wfo-attendance';
