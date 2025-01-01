@@ -1,6 +1,8 @@
 import {Component, computed, inject, signal} from '@angular/core';
 import {DatePipe, NgClass, NgForOf} from '@angular/common';
 import {AuthService} from '../service/auth.service';
+import {CalenderFirebaseService} from '../service/calender-firebase.service';
+import {WfoAttendance} from '../model/calendar.interface';
 
 @Component({
   selector: 'app-calendar',
@@ -16,15 +18,28 @@ import {AuthService} from '../service/auth.service';
 export class CalendarComponent{
 
   currentDate = signal<Date>(new Date());
-  attendance = signal<string[]>([]);
+  attendance = signal<WfoAttendance[]>([]);
+  showLoader = signal<boolean>(false);
+
   readonly authService: AuthService = inject(AuthService);
+  readonly calendarFirebaseService = inject(CalenderFirebaseService);
 
   calendarDays: Date[] = [];
   weekDays: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   ngOnInit(): void {
     this.generateCalendarDays();
-
+    this.showLoader.set(true);
+    this.calendarFirebaseService.getWfoAttendanceByUsername(this.authService.getCurrentUser()?.email ?? '')
+      .subscribe({
+        next: (wfoAttendanceArray) => {
+          this.attendance.set(wfoAttendanceArray);
+          this.showLoader.set(false);
+        },
+        error: (error) => {
+          this.showLoader.set(false);
+        }
+      });
   }
 
   generateCalendarDays() {
@@ -69,32 +84,61 @@ export class CalendarComponent{
 
   updateWfoAttendance(date: Date) {
     const dateString = date.toLocaleDateString('en-IN');
-
-    if(this.wasWorkingFromOffice(date)) {
-      //Delete the date from the attendance array and then return
-      const filteredAttendance = this.attendance().filter(attendanceDate =>
-        attendanceDate !== dateString
-      );
-      this.attendance.set(filteredAttendance);
+    const wfoAttendanceId = this.getWfoAttendanceId(date)
+    if(wfoAttendanceId) {
+      this.showLoader.set(true);
+      this.calendarFirebaseService.removeWfoDate(wfoAttendanceId).subscribe({
+        next : () => {
+          //Delete the date from the attendance array and then return
+          const filteredAttendance = this.attendance().filter(attendanceDate =>
+            attendanceDate.id !== wfoAttendanceId
+          );
+          this.attendance.set(filteredAttendance);
+          this.showLoader.set(false);
+        },
+        error: (error) => this.showLoader.set(false)
+      });
       return;
     }
-    const updatedAttendance = this.attendance().map(dt=>dt);
-    updatedAttendance.push(dateString);
-    this.attendance.set(updatedAttendance);
+
+    //Add the WfoAttendance here
+    const strDate = dateString.split("/");
+    const day: number = parseInt(strDate[0]);
+    const month: number = parseInt(strDate[1]);
+    const year: number = parseInt(strDate[2]);
+
+    const wfoAttendance: WfoAttendance = {id: '', day: day, month: month, year: year, username: this.authService.getCurrentUser()?.email ?? ''};
+
+    this.showLoader.set(true);
+    this.calendarFirebaseService.addWfoDate(wfoAttendance)
+      .subscribe({
+        next: (addedWfoAttendanceId) => {
+          const updatedAttendance = this.attendance().map(dt=>dt);
+          updatedAttendance.push({...wfoAttendance, id: addedWfoAttendanceId});
+          this.attendance.set(updatedAttendance);
+          this.showLoader.set(false);
+        },
+        error: (error) => this.showLoader.set(false)
+      });
   }
 
   wasWorkingFromOffice(date: Date): boolean {
+    return !!this.getWfoAttendanceId(date);
+  }
+
+  getWfoAttendanceId(date: Date) {
     const dateString = date.toLocaleDateString('en-IN');
-    return !!this.attendance().find(dt => dt === dateString);
+    const wfoAttendance = this.attendance().find(dt => (dt.day + "/" + dt.month + "/" + dt.year) === dateString);
+    return wfoAttendance?.id;
   }
 
   getNoOfDaysCompleted = computed(() => {
     const currentYear = this.currentDate().getFullYear(); // Get the current year
     const currentMonth = this.currentDate().getMonth(); // Get the current month (0-based index, 0 = January, 11 = December)
 
-    return this.attendance().filter((attendanceDate: string) => {
-      // Split the date string into components
-      const [day, month, year] = attendanceDate.split('/').map(Number);
+    return this.attendance().filter((attendanceDate: WfoAttendance) => {
+
+      const {day, month, year} = attendanceDate;
 
       // Note: month is 0-based in JavaScript Date
       return year === currentYear && month - 1 === currentMonth;

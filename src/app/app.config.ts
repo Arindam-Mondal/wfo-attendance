@@ -6,6 +6,7 @@ import {provideHttpClient} from '@angular/common/http';
 import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
 import {getAuth, provideAuth} from '@angular/fire/auth';
 import {environment} from '../environments/environment';
+import {getFirestore, provideFirestore} from '@angular/fire/firestore';
 
 // const firebaseConfig = {
 //   apiKey: import.meta.env["NG_APP_FB_API_KEY"],
@@ -31,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideAuth(()=> getAuth())
+    provideAuth(()=> getAuth()),
+    provideFirestore(() => getFirestore())
   ]
 };
